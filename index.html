@@ -3,45 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>たいわっCard｜そのとき、どうしてほしい？</title>
+  <title>たいわっCard</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>たいわっCard</h1>
-    <p>そのとき、どうしてほしい？ 終末期の価値観を整理するカードゲーム</p>
-  </header>
+  <div class="board">
+    <button id="reset">リセット</button>
 
-  <main>
-    <section class="deck-section">
-      <button id="draw-button" class="btn-pink">カードを引く</button>
-      <div id="drawn-card" class="card hidden"></div>
-    </section>
+    <div class="zones">
+      <div class="zone" id="zone-very-important"></div>
+      <div class="zone" id="zone-somewhat-important"></div>
+      <div class="zone" id="zone-not-important"></div>
+    </div>
 
-    <section id="board">
-      <div class="category" data-category="very-important">
-        <h2>私にとって「とても重要」</h2>
-        <div class="dropzone" id="zone-very"></div>
-      </div>
-      <div class="category" data-category="somewhat-important">
-        <h2>私にとって「ある程度重要」</h2>
-        <div class="dropzone" id="zone-somewhat"></div>
-      </div>
-      <div class="category" data-category="not-important">
-        <h2>私にとって「重要でない」</h2>
-        <div class="dropzone" id="zone-not"></div>
-      </div>
-    </section>
-
-    <section class="action-buttons">
-      <button id="save-csv" class="btn-orange">CSVで保存</button>
-      <button id="save-image" class="btn-cream">画像で保存</button>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 たいわっCard Project</p>
-  </footer>
+    <div class="card-area">
+      <img src="images/back.png" id="card" draggable="true" />
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
