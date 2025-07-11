@@ -1,57 +1,53 @@
-body {
-  margin: 0;
-  font-family: "Hiragino Kaku Gothic ProN", sans-serif;
-  background-image: url('images/bg.png');
-  background-size: cover;
-  background-position: center;
-}
-
-.board {
+.card-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
   padding: 20px;
 }
 
-#reset {
-  background-color: #c8f0d2;
-  border: none;
-  padding: 10px 20px;
-  font-size: 18px;
-  border-radius: 20px;
-  margin-bottom: 20px;
+.card {
+  width: 120px;
+  height: 170px;
+  perspective: 1000px;
   cursor: pointer;
 }
 
-.zones {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+.card-inner {
   width: 100%;
-  padding-right: 40px;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
 }
 
-.zone {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 4px;
-  border: 4px solid black;
-  padding: 8px;
-  background-color: rgba(255, 255, 255, 0.3);
-  width: 90%;
-  height: 140px;
-  margin: 0 auto;
+.card:hover .card-inner {
+  transform: rotateY(180deg);
 }
 
-.card-area {
+.card-front, .card-back {
   position: absolute;
-  left: 40px;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.card-area img {
-  width: 180px;
-  cursor: pointer;
+.card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  padding: 10px;
+  font-size: 12px;
+  text-align: center;
 }
