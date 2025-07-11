@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>たいわっCard</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="board">
-    <button id="reset">リセット</button>
 
-    <div class="zones">
-      <div class="zone" id="zone-very-important"></div>
-      <div class="zone" id="zone-somewhat-important"></div>
-      <div class="zone" id="zone-not-important"></div>
-    </div>
+  <!-- カードを引くボタン -->
+  <button id="draw-button">カードを引く</button>
+  <!-- リセットボタン -->
+  <button id="reset">リセット</button>
 
-    <div class="card-area">
-      <img src="images/back.png" id="card" draggable="true" />
-    </div>
+  <!-- 引いたカードを表示するエリア -->
+  <div id="draw-area" class="draw-area"></div>
+
+  <!-- カード分類用ドロップゾーン -->
+  <div class="zones">
+    <div id="high-zone" class="zone">とても重要</div>
+    <div id="medium-zone" class="zone">ある程度重要</div>
+    <div id="low-zone" class="zone">重要ではない</div>
   </div>
 
   <script src="script.js"></script>
