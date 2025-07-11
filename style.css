@@ -1,17 +1,105 @@
+
 body {
-  font-family: sans-serif;
-  background-color: #f8f8f8;
+  font-family: 'Helvetica Neue', sans-serif;
+  background-color: #fffafc;
+  color: #333;
   margin: 0;
-  padding: 1rem;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 1em;
+  background-color: #ffeef3;
 }
 
 h1 {
-  text-align: center;
-  color: #333;
+  font-size: 2em;
+  margin-bottom: 0.2em;
 }
 
-#card-container {
+main {
+  padding: 1em;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.deck-section {
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+#drawn-card {
+  margin-top: 1em;
+  padding: 1em;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: inline-block;
+  min-height: 120px;
+  min-width: 200px;
+}
+
+.hidden {
+  display: none;
+}
+
+.category {
+  margin-bottom: 2em;
+}
+
+.category h2 {
+  background-color: #fbdde2;
+  padding: 0.5em;
+  border-radius: 8px;
+}
+
+.dropzone {
+  min-height: 120px;
+  border: 2px dashed #ccc;
+  padding: 1em;
+  border-radius: 10px;
+  margin-top: 0.5em;
+  background-color: #fff;
+}
+
+.action-buttons {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  gap: 1em;
+  margin-top: 2em;
+}
+
+.btn-pink {
+  background-color: #f8c8d2;
+  color: #000;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-orange {
+  background-color: #ffa07a;
+  color: white;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-cream {
+  background-color: #fff3cd;
+  color: #333;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
 }
