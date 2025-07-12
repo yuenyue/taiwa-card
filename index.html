@@ -2,85 +2,121 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>たいわっCard 振り分け</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
-    .category {
-      width: 30%;
-      min-height: 200px;
-      border: 2px dashed #aaa;
-      display: inline-block;
-      vertical-align: top;
-      margin: 10px;
-      padding: 10px;
-    }
-    .category h2 {
-      font-size: 18px;
-    }
-    #card-container {
+
+    h1 {
       margin-top: 20px;
     }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .dropzone {
+      width: 30%;
+      min-height: 400px;
+      border: 2px dashed #aaa;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .dropzone p {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #draw-area {
+      margin-top: 40px;
+    }
+
     .card {
-      width: 150px;
-      height: 210px;
+      width: 120px;
+      height: 160px;
+      margin: 10px auto;
+      background-image: url('images/58.png'); /* 裏面画像 */
       background-size: cover;
       background-position: center;
-      margin: 10px auto;
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
     }
+
     .card:hover {
       transform: scale(1.05);
     }
-    #draw-button {
+
+    .card.flipped {
+      cursor: grab;
+    }
+
+    button {
+      margin-top: 20px;
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-      background-color: #f8a5c2;
       border: none;
+      background-color: #f08bb4;
       color: white;
       border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
+
   <h1>たいわっCard 振り分け</h1>
 
-  <div id="categories">
-    <div class="category" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <h2>とても重要</h2>
+  <div class="container">
+    <div id="very-important" class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <p>とても重要</p>
     </div>
-    <div class="category" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <h2>ある程度重要</h2>
+    <div id="somewhat-important" class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <p>ある程度重要</p>
     </div>
-    <div class="category" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <h2>重要ではない</h2>
+    <div id="not-important" class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <p>重要ではない</p>
     </div>
   </div>
 
-  <div id="card-container">
-    <div id="draw-area"></div>
-    <button id="draw-button" onclick="drawCard()">カードを引く</button>
-  </div>
+  <div id="draw-area"></div>
+  <button id="draw-button" onclick="drawCard()">カードを引く</button>
 
   <script>
+    const maxCardsByColumnId = {
+      "very-important": 15,
+      "somewhat-important": 27,
+      "not-important": 15
+    };
+
     let currentIndex = 0;
     const totalCards = 57;
     const cardStack = [];
 
-    // シャッフル済みの配列を作成
-    for (let i = 1; i <= totalCards; i++) {
-      cardStack.push({
-        id: `card${i}`,
-        front: `images/card${String(i).padStart(2, '0')}.png`
-      });
-    }
+    window.onload = function () {
+      for (let i = 1; i <= totalCards; i++) {
+        cardStack.push({
+          id: `card${i}`,
+          front: `images/card${String(i).padStart(2, '0')}.png`
+        });
+      }
+      drawCard(); // 初回カードを表示（裏面）
+    };
 
     function allowDrop(ev) {
       ev.preventDefault();
@@ -94,11 +130,25 @@
       ev.preventDefault();
       const data = ev.dataTransfer.getData("text");
       const card = document.getElementById(data);
-      ev.target.appendChild(card);
+      const target = ev.currentTarget;
+
+      const targetId = target.id;
+      const maxCards = maxCardsByColumnId[targetId];
+
+      if (maxCards !== undefined) {
+        const currentCards = target.querySelectorAll(".card").length;
+        if (currentCards >= maxCards) {
+          alert("このカテゴリにはこれ以上カードを追加できません。");
+          return;
+        }
+      }
+
+      target.appendChild(card);
     }
 
     function flipCard(cardElement) {
       if (cardElement.classList.contains("flipped")) return;
+
       const frontImage = cardElement.getAttribute("data-front");
       if (frontImage) {
         cardElement.style.backgroundImage = `url('${frontImage}')`;
@@ -115,15 +165,13 @@
       }
 
       const drawArea = document.getElementById("draw-area");
-      while (drawArea.firstChild) {
-        drawArea.removeChild(drawArea.firstChild);
-      }
+      drawArea.innerHTML = ""; // 直前のカード削除
 
       const cardData = cardStack[currentIndex];
       const card = document.createElement("div");
       card.id = cardData.id;
       card.className = "card";
-      card.style.backgroundImage = "url('images/58.png')";
+      card.style.backgroundImage = "url('images/58.png')"; // 裏面で初期表示
       card.setAttribute("data-front", cardData.front);
       card.setAttribute("onclick", "flipCard(this)");
 
@@ -134,11 +182,7 @@
         document.getElementById("draw-button").disabled = true;
       }
     }
-
-    // 初期表示で1枚表示
-    window.onload = () => {
-      drawCard();
-    };
   </script>
+
 </body>
 </html>
