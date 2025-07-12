@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>たいわっCard 振り分け</title>
   <style>
     body {
@@ -14,6 +14,7 @@
       display: flex;
       justify-content: space-around;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .dropzone {
@@ -33,11 +34,11 @@
       width: 120px;
       height: 160px;
       margin: 10px auto;
-      background-image: url('images/58.png');  /* ← 裏面画像を58.pngに */
+      background-image: url('images/58.png'); /* 裏面画像 */
       background-size: cover;
       background-position: center;
       border-radius: 8px;
-      cursor: move;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -57,14 +58,14 @@
     </div>
   </div>
 
-  <!-- カード一覧（初期表示） -->
+  <!-- カード一覧（裏面から始まり、クリックで表面表示） -->
   <div id="card-pile" style="margin-top: 40px;">
-    <div id="card1" class="card" draggable="true" ondragstart="drag(event)"></div>
-    <div id="card2" class="card" draggable="true" ondragstart="drag(event)"></div>
-    <div id="card3" class="card" draggable="true" ondragstart="drag(event)"></div>
-    <div id="card4" class="card" draggable="true" ondragstart="drag(event)"></div>
-    <div id="card5" class="card" draggable="true" ondragstart="drag(event)"></div>
-    <!-- 必要な数だけ追加してください -->
+    <div id="card1" class="card" draggable="true" data-front="images/card01.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
+    <div id="card2" class="card" draggable="true" data-front="images/card02.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
+    <div id="card3" class="card" draggable="true" data-front="images/card03.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
+    <div id="card4" class="card" draggable="true" data-front="images/card04.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
+    <div id="card5" class="card" draggable="true" data-front="images/card05.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
+    <!-- 必要に応じて、57枚分追加 -->
   </div>
 
   <script>
@@ -101,6 +102,23 @@
       }
 
       target.appendChild(card);
+    }
+
+    function flipCard(cardElement) {
+      const isFlipped = cardElement.classList.contains("flipped");
+
+      if (isFlipped) {
+        // 裏面に戻す
+        cardElement.style.backgroundImage = "url('images/58.png')";
+        cardElement.classList.remove("flipped");
+      } else {
+        // 表面を表示
+        const frontImage = cardElement.getAttribute("data-front");
+        if (frontImage) {
+          cardElement.style.backgroundImage = `url('${frontImage}')`;
+          cardElement.classList.add("flipped");
+        }
+      }
     }
   </script>
 
