@@ -36,18 +36,14 @@
       margin-bottom: 10px;
     }
 
-    #card-pile {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    #draw-area {
       margin-top: 40px;
-      padding-bottom: 40px;
     }
 
     .card {
       width: 120px;
       height: 160px;
-      margin: 10px;
+      margin: 10px auto;
       background-image: url('images/58.png'); /* 裏面画像 */
       background-size: cover;
       background-position: center;
@@ -63,6 +59,22 @@
 
     .card.flipped {
       cursor: grab;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #f08bb4;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -82,27 +94,27 @@
     </div>
   </div>
 
-  <div id="card-pile"></div>
+  <div id="draw-area"></div>
+  <button id="draw-button" onclick="drawCard()">カードを引く</button>
 
   <script>
-    // カテゴリごとの最大枚数
     const maxCardsByColumnId = {
       "very-important": 15,
       "somewhat-important": 27,
       "not-important": 15
     };
 
-    // カードを57枚生成（card01.png〜card57.png）
-    window.onload = function () {
-      const pile = document.getElementById("card-pile");
+    let currentIndex = 0;
+    const totalCards = 57;
+    const cardStack = [];
 
-      for (let i = 1; i <= 57; i++) {
-        const card = document.createElement("div");
-        card.id = `card${i}`;
-        card.className = "card";
-        card.setAttribute("data-front", `images/card${String(i).padStart(2, '0')}.png`);
-        card.setAttribute("onclick", "flipCard(this)");
-        pile.appendChild(card);
+    // 初期化（カードデータを生成）
+    window.onload = function () {
+      for (let i = 1; i <= totalCards; i++) {
+        cardStack.push({
+          id: `card${i}`,
+          front: `images/card${String(i).padStart(2, '0')}.png`
+        });
       }
     };
 
@@ -134,9 +146,8 @@
       target.appendChild(card);
     }
 
-    // カードは一度だけめくれる（裏面→表面）仕様
     function flipCard(cardElement) {
-      if (cardElement.classList.contains("flipped")) return; // すでに表面なら何もしない
+      if (cardElement.classList.contains("flipped")) return;
 
       const frontImage = cardElement.getAttribute("data-front");
       if (frontImage) {
@@ -144,6 +155,29 @@
         cardElement.classList.add("flipped");
         cardElement.setAttribute("draggable", "true");
         cardElement.setAttribute("ondragstart", "drag(event)");
+      }
+    }
+
+    function drawCard() {
+      if (currentIndex >= totalCards) {
+        document.getElementById("draw-button").disabled = true;
+        return;
+      }
+
+      const cardData = cardStack[currentIndex];
+      const card = document.createElement("div");
+      card.id = cardData.id;
+      card.className = "card";
+      card.setAttribute("data-front", cardData.front);
+      card.setAttribute("onclick", "flipCard(this)");
+
+      const drawArea = document.getElementById("draw-area");
+      drawArea.innerHTML = ""; // 前のカードを消す
+      drawArea.appendChild(card);
+
+      currentIndex++;
+      if (currentIndex >= totalCards) {
+        document.getElementById("draw-button").disabled = true;
       }
     }
   </script>
