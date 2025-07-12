@@ -97,9 +97,10 @@
         cardElement.setAttribute("draggable", "true");
         cardElement.setAttribute("ondragstart", "drag(event)");
 
+        // 新しい裏面カードを追加
         setTimeout(() => {
           drawNextCard();
-        }, 500);
+        }, 300);
       }
     }
 
@@ -107,8 +108,6 @@
       if (currentIndex >= cardStack.length) return;
 
       const container = document.getElementById("card-container");
-      container.innerHTML = "";
-
       const cardData = cardStack[currentIndex];
       const card = document.createElement("div");
       card.id = cardData.id;
