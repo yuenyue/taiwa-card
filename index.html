@@ -1,188 +1,29 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>たいわっCard 振り分け</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+function drawCard() {
+  if (currentIndex >= totalCards) {
+    document.getElementById("draw-button").disabled = true;
+    return;
+  }
 
-    h1 {
-      margin-top: 20px;
-    }
+  const drawArea = document.getElementById("draw-area");
+  
+  // 🎯 すでにあるカードを削除（前の裏面が残ってしまう対策）
+  while (drawArea.firstChild) {
+    drawArea.removeChild(drawArea.firstChild);
+  }
 
-    .container {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
+  const cardData = cardStack[currentIndex];
+  const card = document.createElement("div");
+  card.id = cardData.id;
+  card.className = "card";
+  card.style.backgroundImage = "url('images/58.png')"; // ✅ 裏面から表示
+  card.setAttribute("data-front", cardData.front);
+  card.setAttribute("onclick", "flipCard(this)");
+  // draggable は flip されてから有効になるのでここでは未設定
 
-    .dropzone {
-      width: 30%;
-      min-height: 400px;
-      border: 2px dashed #aaa;
-      padding: 10px;
-      box-sizing: border-box;
-    }
+  drawArea.appendChild(card);
+  currentIndex++;
 
-    .dropzone p {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    #draw-area {
-      margin-top: 40px;
-    }
-
-    .card {
-      width: 120px;
-      height: 160px;
-      margin: 10px auto;
-      background-image: url('images/58.png'); /* 裏面画像 */
-      background-size: cover;
-      background-position: center;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s;
-    }
-
-    .card:hover {
-      transform: scale(1.05);
-    }
-
-    .card.flipped {
-      cursor: grab;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      background-color: #f08bb4;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>たいわっCard 振り分け</h1>
-
-  <div class="container">
-    <div id="very-important" class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <p>とても重要</p>
-    </div>
-    <div id="somewhat-important" class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <p>ある程度重要</p>
-    </div>
-    <div id="not-important" class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <p>重要ではない</p>
-    </div>
-  </div>
-
-  <div id="draw-area"></div>
-  <button id="draw-button" onclick="drawCard()">カードを引く</button>
-
-  <script>
-    const maxCardsByColumnId = {
-      "very-important": 15,
-      "somewhat-important": 27,
-      "not-important": 15
-    };
-
-    let currentIndex = 0;
-    const totalCards = 57;
-    const cardStack = [];
-
-    window.onload = function () {
-      for (let i = 1; i <= totalCards; i++) {
-        cardStack.push({
-          id: `card${i}`,
-          front: `images/card${String(i).padStart(2, '0')}.png`
-        });
-      }
-      drawCard(); // 初回カードを表示（裏面）
-    };
-
-    function allowDrop(ev) {
-      ev.preventDefault();
-    }
-
-    function drag(ev) {
-      ev.dataTransfer.setData("text", ev.target.id);
-    }
-
-    function drop(ev) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      const card = document.getElementById(data);
-      const target = ev.currentTarget;
-
-      const targetId = target.id;
-      const maxCards = maxCardsByColumnId[targetId];
-
-      if (maxCards !== undefined) {
-        const currentCards = target.querySelectorAll(".card").length;
-        if (currentCards >= maxCards) {
-          alert("このカテゴリにはこれ以上カードを追加できません。");
-          return;
-        }
-      }
-
-      target.appendChild(card);
-    }
-
-    function flipCard(cardElement) {
-      if (cardElement.classList.contains("flipped")) return;
-
-      const frontImage = cardElement.getAttribute("data-front");
-      if (frontImage) {
-        cardElement.style.backgroundImage = `url('${frontImage}')`;
-        cardElement.classList.add("flipped");
-        cardElement.setAttribute("draggable", "true");
-        cardElement.setAttribute("ondragstart", "drag(event)");
-      }
-    }
-
-    function drawCard() {
-      if (currentIndex >= totalCards) {
-        document.getElementById("draw-button").disabled = true;
-        return;
-      }
-
-      const drawArea = document.getElementById("draw-area");
-      drawArea.innerHTML = ""; // 直前のカード削除
-
-      const cardData = cardStack[currentIndex];
-      const card = document.createElement("div");
-      card.id = cardData.id;
-      card.className = "card";
-      card.style.backgroundImage = "url('images/58.png')"; // 裏面で初期表示
-      card.setAttribute("data-front", cardData.front);
-      card.setAttribute("onclick", "flipCard(this)");
-
-      drawArea.appendChild(card);
-      currentIndex++;
-
-      if (currentIndex >= totalCards) {
-        document.getElementById("draw-button").disabled = true;
-      }
-    }
-  </script>
-
-</body>
-</html>
+  if (currentIndex >= totalCards) {
+    document.getElementById("draw-button").disabled = true;
+  }
+}
