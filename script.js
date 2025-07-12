@@ -1,80 +1,89 @@
-// ┌───────────────────────────
-// │ 1. カードの画像パスを準備
-// └───────────────────────────
-const cards = [];
-for (let i = 1; i <= 57; i++) {
-  // 1〜9 → "01","02"…、10〜57 → "10","11"…
-  const num = ('0' + i).slice(-2);
-  cards.push(`images/${num}.png`);
-}
-
+// ─────────────────────────────────
+// 【カードリストの準備】01〜57までの画像パスを配列に
+// ─────────────────────────────────
+const cards = Array.from({length:57}, (_,i)=> {
+  const num = String(i+1).padStart(2,'0');
+  return `images/${num}.png`;
+});
 let currentIndex = 0;  // 次に引くカードの番号
 
-// ┌───────────────────────────
-// │ 2. HTML上の場所を取り出す
-// └───────────────────────────
-const drawButton  = document.getElementById('draw-button');
-const drawArea    = document.getElementById('draw-area');
+// ─────────────────────────────────
+// 【要素を取ってくる】
+// ─────────────────────────────────
+const drawArea = document.getElementById('draw-area');
 const zones = {
-  high:   document.getElementById('high-zone'),    // とても重要
-  medium: document.getElementById('medium-zone'),  // ある程度重要
-  low:    document.getElementById('low-zone')      // 重要ではない
+  high:   document.getElementById('high-zone'),
+  medium: document.getElementById('medium-zone'),
+  low:    document.getElementById('low-zone')
 };
+const resetBtn = document.getElementById('reset');
 
-// ┌───────────────────────────
-// │ 3. カードを「引く」しくみ
-// └───────────────────────────
-drawButton.addEventListener('click', () => {
-  // カードがなくなったら何もしない
+// ─────────────────────────────────
+// 【カードを引く／次へ】
+// ─────────────────────────────────
+function drawCard() {
+  // もうカードが残っていなければ何もしない
   if (currentIndex >= cards.length) return;
-
-  // 新しい<img>を作って drawArea に入れる
+  drawArea.innerHTML = '';            // 前のカードをクリア
   const img = document.createElement('img');
-  img.src       = cards[currentIndex];
-  img.id        = `card-${currentIndex}`;
-  img.draggable = true;        // ドラッグできるように
-  img.className = 'card back'; // CSSで裏面デザインを当てます
-
-  // 以前のカードは消して、新しいカードだけ表示
-  drawArea.innerHTML = '';
+  img.src = cards[currentIndex];
+  img.dataset.index = currentIndex;  // 何番目のカードか保持
+  img.classList.add('back');          // CSSで裏面スタイルも付与できる
   drawArea.appendChild(img);
-
   currentIndex++;
-});
+  drawArea.textContent = '';          // 「ここをタップ…」文を消す
+}
 
-// ┌───────────────────────────
-// │ 4. クリックで「めくる」（裏⇔表）
-// └───────────────────────────
-drawArea.addEventListener('click', e => {
-  if (e.target.tagName !== 'IMG') return;
-  const img = e.target;
+// ─────────────────────────────────
+// 【カードをめくる】
+// ─────────────────────────────────
+function flipCard(img) {
+  if (!img) return;
   if (img.classList.contains('back')) {
-    img.classList.remove('back');
-    img.classList.add('front');
+    img.classList.replace('back','front');
   } else {
-    img.classList.remove('front');
-    img.classList.add('back');
+    img.classList.replace('front','back');
+  }
+}
+
+// ─────────────────────────────────
+// 【カードをゾーンに振り分ける】
+// ─────────────────────────────────
+function classifyCard(zoneKey) {
+  const img = drawArea.querySelector('img');
+  if (!img) return;
+  zones[zoneKey].appendChild(img);
+}
+
+// ─────────────────────────────────
+// 【リセット】全てのカードを戻して最初から
+// ─────────────────────────────────
+function resetAll() {
+  // ゾーン内のカードを消す
+  Object.values(zones).forEach(zone => zone.innerHTML = zone.textContent);
+  // 引き直しエリアも初期状態に
+  drawArea.innerHTML = 'ここをタップしてカードを引く';
+  currentIndex = 0;
+}
+
+// ─────────────────────────────────
+// 【イベント登録】
+// ─────────────────────────────────
+
+// draw-area をタップ → カードがなければ「引く」、あれば「めくる」
+drawArea.addEventListener('click', e => {
+  const img = drawArea.querySelector('img');
+  if (!img) {
+    drawCard();      // カードを引く
+  } else {
+    flipCard(img);   // カードをめくる
   }
 });
 
-// ┌───────────────────────────
-// │ 5. ドラッグ＆ドロップのしくみ
-// └───────────────────────────
+// ゾーンをタップ → カードをそのゾーンに移動
+zones.high.addEventListener('click',  ()=> classifyCard('high'));
+zones.medium.addEventListener('click',()=> classifyCard('medium'));
+zones.low.addEventListener('click',   ()=> classifyCard('low'));
 
-// カードをドラッグし始めたとき
-drawArea.addEventListener('dragstart', e => {
-  if (e.target.tagName === 'IMG') {
-    e.dataTransfer.setData('text/plain', e.target.id);
-  }
-});
-
-// 分類ゾーンを「ここに置けるよ！」状態にして
-Object.values(zones).forEach(zone => {
-  zone.addEventListener('dragover', e => e.preventDefault());
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    const id   = e.dataTransfer.getData('text/plain');
-    const card = document.getElementById(id);
-    zone.appendChild(card);
-  });
-});
+// リセットボタン
+resetBtn.addEventListener('click', resetAll);
