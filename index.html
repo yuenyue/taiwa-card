@@ -8,6 +8,12 @@
     body {
       font-family: sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin-top: 20px;
     }
 
     .container {
@@ -30,15 +36,29 @@
       margin-bottom: 10px;
     }
 
+    #card-pile {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+      padding-bottom: 40px;
+    }
+
     .card {
       width: 120px;
       height: 160px;
-      margin: 10px auto;
+      margin: 10px;
       background-image: url('images/58.png'); /* 裏面画像 */
       background-size: cover;
       background-position: center;
       border-radius: 8px;
       cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>
@@ -58,21 +78,30 @@
     </div>
   </div>
 
-  <!-- カード一覧（裏面から始まり、クリックで表面表示） -->
-  <div id="card-pile" style="margin-top: 40px;">
-    <div id="card1" class="card" draggable="true" data-front="images/card01.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
-    <div id="card2" class="card" draggable="true" data-front="images/card02.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
-    <div id="card3" class="card" draggable="true" data-front="images/card03.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
-    <div id="card4" class="card" draggable="true" data-front="images/card04.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
-    <div id="card5" class="card" draggable="true" data-front="images/card05.png" onclick="flipCard(this)" ondragstart="drag(event)"></div>
-    <!-- 必要に応じて、57枚分追加 -->
-  </div>
+  <div id="card-pile"></div>
 
   <script>
+    // カテゴリごとの最大枚数
     const maxCardsByColumnId = {
       "very-important": 15,
       "somewhat-important": 27,
       "not-important": 15
+    };
+
+    // カードを57枚生成（card01.png〜card57.png）
+    window.onload = function () {
+      const pile = document.getElementById("card-pile");
+
+      for (let i = 1; i <= 57; i++) {
+        const card = document.createElement("div");
+        card.id = `card${i}`;
+        card.className = "card";
+        card.setAttribute("draggable", "true");
+        card.setAttribute("data-front", `images/card${String(i).padStart(2, '0')}.png`);
+        card.setAttribute("ondragstart", "drag(event)");
+        card.setAttribute("onclick", "flipCard(this)");
+        pile.appendChild(card);
+      }
     };
 
     function allowDrop(ev) {
@@ -94,7 +123,6 @@
 
       if (maxCards !== undefined) {
         const currentCards = target.querySelectorAll(".card").length;
-
         if (currentCards >= maxCards) {
           alert("このカテゴリにはこれ以上カードを追加できません。");
           return;
@@ -112,7 +140,7 @@
         cardElement.style.backgroundImage = "url('images/58.png')";
         cardElement.classList.remove("flipped");
       } else {
-        // 表面を表示
+        // 表面に切り替える
         const frontImage = cardElement.getAttribute("data-front");
         if (frontImage) {
           cardElement.style.backgroundImage = `url('${frontImage}')`;
