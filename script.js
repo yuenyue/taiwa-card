@@ -22,16 +22,14 @@ const resetBtn = document.getElementById('reset');
 // 【カードを引く／次へ】
 // ─────────────────────────────────
 function drawCard() {
-  // もうカードが残っていなければ何もしない
   if (currentIndex >= cards.length) return;
-  drawArea.innerHTML = '';            // 前のカードをクリア
+  drawArea.innerHTML = '';
   const img = document.createElement('img');
   img.src = cards[currentIndex];
-  img.dataset.index = currentIndex;  // 何番目のカードか保持
-  img.classList.add('back');          // CSSで裏面スタイルも付与できる
+  img.dataset.index = currentIndex;
+  img.classList.add('back');
   drawArea.appendChild(img);
   currentIndex++;
-  drawArea.textContent = '';          // 「ここをタップ…」文を消す
 }
 
 // ─────────────────────────────────
@@ -39,11 +37,8 @@ function drawCard() {
 // ─────────────────────────────────
 function flipCard(img) {
   if (!img) return;
-  if (img.classList.contains('back')) {
-    img.classList.replace('back','front');
-  } else {
-    img.classList.replace('front','back');
-  }
+  img.classList.toggle('back');
+  img.classList.toggle('front');
 }
 
 // ─────────────────────────────────
@@ -59,9 +54,10 @@ function classifyCard(zoneKey) {
 // 【リセット】全てのカードを戻して最初から
 // ─────────────────────────────────
 function resetAll() {
-  // ゾーン内のカードを消す
-  Object.values(zones).forEach(zone => zone.innerHTML = zone.textContent);
-  // 引き直しエリアも初期状態に
+  Object.values(zones).forEach(zone => {
+    // ゾーン内の画像を取り出して空テキスト（見出し）だけ残す
+    zone.innerHTML = zone.textContent;
+  });
   drawArea.innerHTML = 'ここをタップしてカードを引く';
   currentIndex = 0;
 }
@@ -69,21 +65,15 @@ function resetAll() {
 // ─────────────────────────────────
 // 【イベント登録】
 // ─────────────────────────────────
-
-// draw-area をタップ → カードがなければ「引く」、あれば「めくる」
-drawArea.addEventListener('click', e => {
+drawArea.addEventListener('click', () => {
   const img = drawArea.querySelector('img');
   if (!img) {
-    drawCard();      // カードを引く
+    drawCard();
   } else {
-    flipCard(img);   // カードをめくる
+    flipCard(img);
   }
 });
-
-// ゾーンをタップ → カードをそのゾーンに移動
 zones.high.addEventListener('click',  ()=> classifyCard('high'));
 zones.medium.addEventListener('click',()=> classifyCard('medium'));
 zones.low.addEventListener('click',   ()=> classifyCard('low'));
-
-// リセットボタン
 resetBtn.addEventListener('click', resetAll);
