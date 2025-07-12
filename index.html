@@ -115,7 +115,7 @@
           front: `images/card${String(i).padStart(2, '0')}.png`
         });
       }
-      drawCard(); // 初回カード自動表示
+      drawCard(); // 初回カードを表示（裏面）
     };
 
     function allowDrop(ev) {
@@ -165,17 +165,19 @@
       }
 
       const drawArea = document.getElementById("draw-area");
-      drawArea.innerHTML = ""; // 前のカードを消す
+      drawArea.innerHTML = ""; // 直前のカード削除
 
       const cardData = cardStack[currentIndex];
       const card = document.createElement("div");
       card.id = cardData.id;
       card.className = "card";
+      card.style.backgroundImage = "url('images/58.png')"; // 裏面で初期表示
       card.setAttribute("data-front", cardData.front);
       card.setAttribute("onclick", "flipCard(this)");
 
       drawArea.appendChild(card);
       currentIndex++;
+
       if (currentIndex >= totalCards) {
         document.getElementById("draw-button").disabled = true;
       }
