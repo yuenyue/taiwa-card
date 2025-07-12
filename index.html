@@ -81,27 +81,10 @@
   <div id="card-pile"></div>
 
   <script>
-    // カテゴリごとの最大枚数
     const maxCardsByColumnId = {
       "very-important": 15,
       "somewhat-important": 27,
       "not-important": 15
-    };
-
-    // カードを57枚生成（card01.png〜card57.png）
-    window.onload = function () {
-      const pile = document.getElementById("card-pile");
-
-      for (let i = 1; i <= 57; i++) {
-        const card = document.createElement("div");
-        card.id = `card${i}`;
-        card.className = "card";
-        card.setAttribute("draggable", "true");
-        card.setAttribute("data-front", `images/card${String(i).padStart(2, '0')}.png`);
-        card.setAttribute("ondragstart", "drag(event)");
-        card.setAttribute("onclick", "flipCard(this)");
-        pile.appendChild(card);
-      }
     };
 
     function allowDrop(ev) {
@@ -136,11 +119,9 @@
       const isFlipped = cardElement.classList.contains("flipped");
 
       if (isFlipped) {
-        // 裏面に戻す
         cardElement.style.backgroundImage = "url('images/58.png')";
         cardElement.classList.remove("flipped");
       } else {
-        // 表面に切り替える
         const frontImage = cardElement.getAttribute("data-front");
         if (frontImage) {
           cardElement.style.backgroundImage = `url('${frontImage}')`;
@@ -148,6 +129,21 @@
         }
       }
     }
+
+    window.onload = function () {
+      const pile = document.getElementById("card-pile");
+
+      for (let i = 1; i <= 57; i++) {
+        const card = document.createElement("div");
+        card.id = `card${i}`;
+        card.className = "card";
+        card.setAttribute("draggable", "true");
+        card.setAttribute("data-front", `images/card${String(i).padStart(2, '0')}.png`);
+        card.setAttribute("ondragstart", "drag(event)");
+        card.setAttribute("onclick", "flipCard(this)");
+        pile.appendChild(card);
+      }
+    };
   </script>
 
 </body>
