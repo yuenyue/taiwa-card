@@ -36,19 +36,10 @@
       margin-bottom: 10px;
     }
 
-    #card-pile {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 40px;
-      padding-bottom: 40px;
-    }
-
     .card {
       width: 120px;
       height: 160px;
-      margin: 10px;
-      background-image: url('images/58.png'); /* 裏面画像 */
+      margin: 10px auto;
       background-size: cover;
       background-position: center;
       border-radius: 8px;
@@ -59,6 +50,15 @@
 
     .card:hover {
       transform: scale(1.05);
+    }
+
+    #deck-area {
+      margin-top: 40px;
+    }
+
+    #current-card-area {
+      margin-top: 20px;
+      min-height: 180px;
     }
   </style>
 </head>
@@ -78,7 +78,11 @@
     </div>
   </div>
 
-  <div id="card-pile"></div>
+  <!-- 山札と現在のカード -->
+  <div id="deck-area">
+    <div id="deck" class="card" onclick="drawCard()" style="background-image: url('images/58.png');"></div>
+  </div>
+  <div id="current-card-area"></div>
 
   <script>
     const maxCardsByColumnId = {
@@ -86,6 +90,63 @@
       "somewhat-important": 27,
       "not-important": 15
     };
+
+    let remainingCards = [];
+    let currentCard = null;
+
+    // 初期化：シャッフルして山札を用意
+    window.onload = function () {
+      for (let i = 1; i <= 57; i++) {
+        remainingCards.push(i);
+      }
+      shuffle(remainingCards);
+    };
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function drawCard() {
+      if (currentCard) {
+        alert("今のカードをどこかに置いてください。");
+        return;
+      }
+
+      const next = remainingCards.shift();
+      if (!next) {
+        alert("すべてのカードを引き終えました！");
+        return;
+      }
+
+      const card = document.createElement("div");
+      card.id = `card${next}`;
+      card.className = "card";
+      card.setAttribute("draggable", "true");
+      card.setAttribute("data-front", `images/card${String(next).padStart(2, '0')}.png`);
+      card.setAttribute("ondragstart", "drag(event)");
+      card.setAttribute("onclick", "flipCard(this)");
+
+      document.getElementById("current-card-area").appendChild(card);
+      currentCard = card;
+    }
+
+    function flipCard(cardElement) {
+      const isFlipped = cardElement.classList.contains("flipped");
+
+      if (isFlipped) {
+        cardElement.style.backgroundImage = "url('images/58.png')";
+        cardElement.classList.remove("flipped");
+      } else {
+        const frontImage = cardElement.getAttribute("data-front");
+        if (frontImage) {
+          cardElement.style.backgroundImage = `url('${frontImage}')`;
+          cardElement.classList.add("flipped");
+        }
+      }
+    }
 
     function allowDrop(ev) {
       ev.preventDefault();
@@ -113,37 +174,11 @@
       }
 
       target.appendChild(card);
-    }
-
-    function flipCard(cardElement) {
-      const isFlipped = cardElement.classList.contains("flipped");
-
-      if (isFlipped) {
-        cardElement.style.backgroundImage = "url('images/58.png')";
-        cardElement.classList.remove("flipped");
-      } else {
-        const frontImage = cardElement.getAttribute("data-front");
-        if (frontImage) {
-          cardElement.style.backgroundImage = `url('${frontImage}')`;
-          cardElement.classList.add("flipped");
-        }
+      if (currentCard && card.id === currentCard.id) {
+        currentCard = null;
+        document.getElementById("current-card-area").innerHTML = '';
       }
     }
-
-    window.onload = function () {
-      const pile = document.getElementById("card-pile");
-
-      for (let i = 1; i <= 57; i++) {
-        const card = document.createElement("div");
-        card.id = `card${i}`;
-        card.className = "card";
-        card.setAttribute("draggable", "true");
-        card.setAttribute("data-front", `images/card${String(i).padStart(2, '0')}.png`);
-        card.setAttribute("ondragstart", "drag(event)");
-        card.setAttribute("onclick", "flipCard(this)");
-        pile.appendChild(card);
-      }
-    };
   </script>
 
 </body>
