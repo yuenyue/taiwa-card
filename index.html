@@ -28,13 +28,14 @@
     }
     #card-container {
       margin-top: 30px;
+      height: 250px;
     }
     .card {
       width: 150px;
       height: 210px;
       background-size: cover;
       background-position: center;
-      margin: 0 auto 10px;
+      margin: 0 auto;
       cursor: pointer;
       transition: transform 0.3s;
     }
@@ -106,6 +107,7 @@
       if (currentIndex >= cardStack.length) return;
 
       const container = document.getElementById("card-container");
+      container.innerHTML = "";
 
       const cardData = cardStack[currentIndex];
       const card = document.createElement("div");
@@ -114,7 +116,6 @@
       card.style.backgroundImage = "url('images/58.png')";
       card.setAttribute("data-front", cardData.front);
       card.setAttribute("onclick", "flipCard(this)");
-      container.innerHTML = "";
       container.appendChild(card);
 
       currentIndex++;
