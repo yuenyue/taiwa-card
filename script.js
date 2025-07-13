@@ -1,81 +1,86 @@
-// ─────────────────────────────────
-// カードリスト（01〜57）を準備
-// ─────────────────────────────────
-const cards = Array.from({length:57}, (_, i) => {
-  const num = String(i+1).padStart(2, '0');
-  return `images/${num}.png`;
+// ✅ script.js が読み込まれました！
+alert('✅ script.js が読み込まれました！');
+
+// ─────────────────────────────────────────────
+// 【カードリストの準備】01～57までの画像パスを用意
+// ─────────────────────────────────────────────
+const cards = Array.from({ length: 57 }, (_, i) => {
+  // i は 0～56 → +1 して 1～57
+  // 1桁のときは左側に0をつけて "01" に
+  const num = String(i + 1).padStart(2, '0');  
+  // ★ここを変更★ "images/01.png" → "images/card01.png" を読む
+  return `images/card${num}.png`;
 });
-let currentIndex = 0;
 
-// ─────────────────────────────────
-// 要素取得
-// ─────────────────────────────────
-const drawArea = document.getElementById('draw-area');
-const board    = document.getElementById('board');
-const resetBtn = document.getElementById('reset');
-const cells    = [];
+// ─────────────────────────────────────────────
+// 【状態管理用変数】
+let currentIndex = 0; // 今何番目のカードを表示中か
 
-// ─────────────────────────────────
-// ボードにセルを自動生成（50マス）
-// ─────────────────────────────────
-function createBoardCells(count = 50) {
-  for (let i = 0; i < count; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.dataset.index = i;
-    // クリックされたら、drawArea のカードをこのセルに移す
-    cell.addEventListener('click', () => {
-      const img = drawArea.querySelector('img');
-      if (img) cell.appendChild(img);
-    });
-    board.appendChild(cell);
-    cells.push(cell);
-  }
-}
+// ─────────────────────────────────────────────
+// 【要素を取得】
+// ─────────────────────────────────────────────
+const drawArea = document.getElementById('draw-area');     // カード表示エリア
+const zones = {                                            // 分類ドロップゾーン
+  high:   document.getElementById('high-zone'),
+  medium: document.getElementById('medium-zone'),
+  low:    document.getElementById('low-zone'),
+};
+const resetBtn = document.getElementById('reset');         // リセットボタン
 
-// ─────────────────────────────────
-// カードを１枚だけ引く
-// ─────────────────────────────────
-function drawCard() {
-  if (currentIndex >= cards.length) return;
-  drawArea.innerHTML = '';
+// ─────────────────────────────────────────────
+// 【カードを画面に表示する関数】
+// ─────────────────────────────────────────────
+function showCard(src) {
+  drawArea.innerHTML = '';              // まずエリアを空に
   const img = document.createElement('img');
-  img.src = cards[currentIndex++];
-  img.dataset.index = currentIndex - 1;
-  img.classList.add('back');
+  img.src = src;
+  img.draggable = true;                 // ドラッグできるように
   drawArea.appendChild(img);
 }
 
-// ─────────────────────────────────
-// 裏⇔表を切り替え
-// ─────────────────────────────────
-function flipCard(img) {
-  img.classList.toggle('back');
-  img.classList.toggle('front');
-}
-
-// ─────────────────────────────────
-// リセット：セルも引きエリアもクリア
-// ─────────────────────────────────
-function resetAll() {
-  drawArea.innerHTML = 'ここをタップしてカードを引く';
-  currentIndex = 0;
-  cells.forEach(cell => cell.innerHTML = '');
-}
-
-// ─────────────────────────────────
-// イベント登録
-// ─────────────────────────────────
+// ─────────────────────────────────────────────
+// 【カードをめくる（クリック）】
+// ─────────────────────────────────────────────
 drawArea.addEventListener('click', () => {
-  const img = drawArea.querySelector('img');
-  img ? flipCard(img) : drawCard();
+  // 次のカードインデックスへ進む（最後まで行ったら0に戻る）
+  currentIndex = (currentIndex + 1) % cards.length;
+  showCard(cards[currentIndex]);
 });
-resetBtn.addEventListener('click', resetAll);
 
-// ─────────────────────────────────
-// 初期化：セル作成＆初期状態
-// ─────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  createBoardCells(50);
-  resetAll();
+// ─────────────────────────────────────────────
+// 【ドラッグ＆ドロップの設定】
+// ─────────────────────────────────────────────
+// ドラッグオーバー時に「ドロップ可」にする
+Object.values(zones).forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+  });
 });
+// ドロップ時に drawArea の img を移動
+Object.values(zones).forEach(zone => {
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    const img = drawArea.querySelector('img');
+    if (img) {
+      zone.appendChild(img);
+    }
+  });
+});
+
+// ─────────────────────────────────────────────
+// 【リセット処理】
+// ─────────────────────────────────────────────
+resetBtn.addEventListener('click', () => {
+  // カード表示を最初に戻す
+  currentIndex = 0;
+  showCard(cards[currentIndex]);
+  // ゾーン内をすべて空に
+  Object.values(zones).forEach(zone => {
+    zone.innerHTML = '';
+  });
+});
+
+// ─────────────────────────────────────────────
+// 【起動時の初期表示】
+// ─────────────────────────────────────────────
+showCard(cards[currentIndex]);
