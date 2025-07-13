@@ -4,13 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>たいわっCard ボード表示</title>
+  <!-- /taiwa-card/ 配下をベースに読み込む -->
   <base href="/taiwa-card/">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* ボードとマスのスタイル */
+    body { font-family: sans-serif; padding: 10px; text-align: center; }
+    #draw-area {
+      width: 200px; height: 300px;
+      border: 2px solid #333;
+      margin: 20px auto;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    #draw-area img { max-width: 100%; max-height: 100%; }
+
+    /* ボード全体 */
     .board {
       display: grid;
-      /* 10列×5行のマス目を例に */
       grid-template-columns: repeat(10, 1fr);
       grid-auto-rows: 120px;
       gap: 10px;
@@ -18,6 +28,7 @@
       border: 2px solid #ccc;
       margin-bottom: 20px;
     }
+    /* 各マス */
     .cell {
       border: 2px dashed #999;
       display: flex;
@@ -30,25 +41,24 @@
       max-height: 100%;
     }
 
-    /* それ以外はこれまでどおり */
-    #draw-area { /* … */ }
-    #reset { /* … */ }
+    #reset {
+      padding: 5px 10px;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
   <h1>たいわっCard ボード表示</h1>
 
-  <!-- カードをタップして引く／めくる -->
+  <!-- カードを引く／めくるエリア -->
   <div id="draw-area">ここをタップしてカードを引く</div>
 
-  <!-- ここが新しいボード -->
-  <div class="board" id="board">
-    <!-- マス目を 50 個出します -->
-    <!-- data-index 属性をつけておくと後で分かりやすい -->
-    ${Array.from({length:50}).map((_,i)=> `<div class="cell" data-index="${i}"></div>`).join('')}
-  </div>
+  <!-- 空っぽのボード（マス目はJSで50個自動生成） -->
+  <div id="board" class="board"></div>
 
+  <!-- 全部リセット -->
   <button id="reset">リセット</button>
+
   <script src="script.js"></script>
 </body>
 </html>
