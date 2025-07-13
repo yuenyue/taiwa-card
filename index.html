@@ -4,51 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>たいわっCard ボード表示</title>
-  <!-- GitHub Pages で /taiwa-card/ 配下に置いているなら必要 -->
-  <base href="/taiwa-card/">
-  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: sans-serif; padding: 10px; text-align: center; }
-    #draw-area {
-      width: 200px; height: 300px;
-      border: 2px solid #333;
-      margin: 20px auto;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-    }
-    #draw-area img { max-width: 100%; max-height: 100%; }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      grid-auto-rows: 120px;
-      gap: 10px;
+    /* ─── レイアウト ─── */
+    body {
+      font-family: sans-serif;
       padding: 20px;
-      border: 2px solid #ccc;
+      text-align: center;
+    }
+    h1 {
       margin-bottom: 20px;
     }
-    .cell {
-      border: 2px dashed #999;
+    /* カードを引くエリア */
+    #draw-area {
+      width: 200px;
+      height: 300px;
+      border: 2px solid #333;
+      margin: 0 auto 30px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      user-select: none;
+    }
+    /* ボード（空セルをグリッドで並べる） */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      max-width: 900px;
+      margin: 0 auto 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .cell {
+      width: 80px;
+      height: 80px;
+      border: 2px dashed #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
     }
     .cell img {
       max-width: 100%;
       max-height: 100%;
     }
-
-    #reset { padding: 5px 10px; font-size: 16px; }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+
   <h1>たいわっCard ボード表示</h1>
 
-  <!-- カードを引く／めくるエリア -->
+  <!-- カードを引くエリア -->
   <div id="draw-area">ここをタップしてカードを引く</div>
 
-  <!-- JS が自動で 50 個の .cell を作ります -->
+  <!-- 空っぽのボード -->
   <div id="board" class="board"></div>
 
-  <!--
+  <button id="reset">リセット</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
