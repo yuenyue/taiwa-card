@@ -1,128 +1,54 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>たいわっCard 振り分け</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>たいわっCard ボード表示</title>
+  <base href="/taiwa-card/">
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
+    /* ボードとマスのスタイル */
+    .board {
+      display: grid;
+      /* 10列×5行のマス目を例に */
+      grid-template-columns: repeat(10, 1fr);
+      grid-auto-rows: 120px;
+      gap: 10px;
+      padding: 20px;
+      border: 2px solid #ccc;
+      margin-bottom: 20px;
     }
-    h1 {
-      margin: 20px 0;
-    }
-    .category {
-      width: 30%;
-      min-height: 200px;
-      border: 2px dashed #aaa;
-      display: inline-block;
-      vertical-align: top;
-      margin: 10px;
-      padding: 10px;
-    }
-    .category h2 {
-      font-size: 18px;
-    }
-    #card-container {
-      margin-top: 30px;
-      height: 250px;
-    }
-    .card {
-      width: 150px;
-      height: 210px;
-      background-size: cover;
-      background-position: center;
-      margin: 0 auto;
+    .cell {
+      border: 2px dashed #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: transform 0.3s;
     }
-    .card:hover {
-      transform: scale(1.05);
+    .cell img {
+      max-width: 100%;
+      max-height: 100%;
     }
+
+    /* それ以外はこれまでどおり */
+    #draw-area { /* … */ }
+    #reset { /* … */ }
   </style>
 </head>
 <body>
-  <h1>たいわっCard 振り分け</h1>
+  <h1>たいわっCard ボード表示</h1>
 
-  <div id="categories">
-    <div class="category" id="very-important" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <h2>とても重要</h2>
-    </div>
-    <div class="category" id="somewhat-important" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <h2>ある程度重要</h2>
-    </div>
-    <div class="category" id="not-important" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <h2>重要ではない</h2>
-    </div>
+  <!-- カードをタップして引く／めくる -->
+  <div id="draw-area">ここをタップしてカードを引く</div>
+
+  <!-- ここが新しいボード -->
+  <div class="board" id="board">
+    <!-- マス目を 50 個出します -->
+    <!-- data-index 属性をつけておくと後で分かりやすい -->
+    ${Array.from({length:50}).map((_,i)=> `<div class="cell" data-index="${i}"></div>`).join('')}
   </div>
 
-  <div id="card-container"></div>
-
-  <script>
-    const totalCards = 57;
-    let currentIndex = 0;
-    const cardStack = [];
-
-    for (let i = 1; i <= totalCards; i++) {
-      cardStack.push({
-        id: `card${i}`,
-        front: `images/card${String(i).padStart(2, '0')}.png`
-      });
-    }
-
-    function allowDrop(ev) {
-      ev.preventDefault();
-    }
-
-    function drag(ev) {
-      ev.dataTransfer.setData("text", ev.target.id);
-    }
-
-    function drop(ev) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      const card = document.getElementById(data);
-      ev.target.appendChild(card);
-    }
-
-    function flipCard(cardElement) {
-      if (cardElement.classList.contains("flipped")) return;
-      const frontImage = cardElement.getAttribute("data-front");
-      if (frontImage) {
-        cardElement.style.backgroundImage = `url('${frontImage}')`;
-        cardElement.classList.add("flipped");
-        cardElement.setAttribute("draggable", "true");
-        cardElement.setAttribute("ondragstart", "drag(event)");
-
-        // 新しい裏面カードを追加
-        setTimeout(() => {
-          drawNextCard();
-        }, 300);
-      }
-    }
-
-    function drawNextCard() {
-      if (currentIndex >= cardStack.length) return;
-
-      const container = document.getElementById("card-container");
-      const cardData = cardStack[currentIndex];
-      const card = document.createElement("div");
-      card.id = cardData.id;
-      card.className = "card";
-      card.style.backgroundImage = "url('images/58.png')";
-      card.setAttribute("data-front", cardData.front);
-      card.setAttribute("onclick", "flipCard(this)");
-      container.appendChild(card);
-
-      currentIndex++;
-    }
-
-    window.onload = () => {
-      drawNextCard();
-    };
-  </script>
+  <button id="reset">リセット</button>
+  <script src="script.js"></script>
 </body>
 </html>
