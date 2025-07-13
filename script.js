@@ -1,78 +1,53 @@
 // script.js
-window.addEventListener('DOMContentLoaded', () => {
-  // ───────────────
-  // 1. カード画像パスの準備
-  // ───────────────
+
+// ページの DOM が完全に構築されたらメイン処理を走らせる
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. カード画像パスのリストを作成（01～58）
   const cards = Array.from({ length: 58 }, (_, i) => {
-    // i=0 → "01", …, i=57 → "58"
     const num = String(i + 1).padStart(2, '0');
     return `images/card${num}.png`;
   });
 
-  let drawIndex    = 0;    // 次に引くカードのインデックス
-  let currentIndex = null; // 今画面上に表示中のカードインデックス
+  // 2. 状態管理
+  let currentIndex = 0;
 
+  // 3. 要素取得（HTML 側で id="draw-area" / id="board" / id="reset" にしておく）
   const drawArea = document.getElementById('draw-area');
   const board    = document.getElementById('board');
   const resetBtn = document.getElementById('reset');
 
-  // ───────────────
-  // 2. 「空っぽの」ボード（50セル）を描画
-  // ───────────────
-  for (let i = 0; i < 50; i++) {
-    const cell = document.createElement('div');
-    cell.className        = 'cell';
-    cell.dataset.index    = i;
-    board.appendChild(cell);
+  // 要素が取れなかったらエラー出して中断
+  if (!drawArea || !board || !resetBtn) {
+    console.error('必要な要素が見つかりませんでした:', {
+      drawArea, board, resetBtn
+    });
+    return;
   }
 
-  // ───────────────
-  // 3. カードを引く処理
-  // ───────────────
-  drawArea.addEventListener('click', () => {
-    // もう引くカードがなければ無視
-    if (drawIndex >= cards.length) return;
+  // カードを引く処理
+  function drawCard() {
+    const src = cards[currentIndex];
+    // draw-area に表示（クリックごとに上書き）
+    drawArea.innerHTML = `<img src="${src}" alt="card" />`;
 
-    // 現在引いたカード index を保持して drawIndex を進める
-    currentIndex = drawIndex++;
-    // draw-area 内をクリアして新しい img を差し込む
-    drawArea.innerHTML = '';
-    const img = new Image();
-    img.src = cards[currentIndex];
-    img.alt = `card ${currentIndex + 1}`;
-    drawArea.appendChild(img);
-  });
+    // board にもセルを追加
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.innerHTML = `<img src="${src}" alt="card" />`;
+    board.appendChild(cell);
 
-  // ───────────────
-  // 4. セルをタップ → 引いたカードをドロップ
-  // ───────────────
-  board.addEventListener('click', e => {
-    const cell = e.target.closest('.cell');
-    if (!cell) return;
-    // カードをまだ引いていない or すでにセルにある場合は無視
-    if (currentIndex === null) return;
-    if (cell.querySelector('img')) return;
+    // 次のカードへ（ループ）
+    currentIndex = (currentIndex + 1) % cards.length;
+  }
 
-    // セルに img を追加
-    const clone = new Image();
-    clone.src = cards[currentIndex];
-    clone.alt = `card ${currentIndex + 1}`;
-    cell.appendChild(clone);
-
-    // ドロップしたら draw-area を文言に戻し、currentIndex クリア
-    currentIndex = null;
+  // リセット処理
+  function resetAll() {
+    currentIndex = 0;
     drawArea.textContent = 'ここをタップしてカードを引く';
-  });
+    board.innerHTML = ''; 
+  }
 
-  // ───────────────
-  // 5. リセットボタン
-  // ───────────────
-  resetBtn.addEventListener('click', () => {
-    // 引き直し準備
-    drawIndex    = 0;
-    currentIndex = null;
-    drawArea.textContent = 'ここをタップしてカードを引く';
-    // ボード内の img をすべて削除
-    board.querySelectorAll('img').forEach(img => img.remove());
-  });
+  // クリックイベントを登録
+  drawArea.addEventListener('click', drawCard);
+  resetBtn.addEventListener('click', resetAll);
 });
