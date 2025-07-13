@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>たいわっCard ボード表示</title>
-  <!-- /taiwa-card/ 配下をベースに読み込む -->
+  <!-- GitHub Pages で /taiwa-card/ 配下に置いているなら必要 -->
   <base href="/taiwa-card/">
   <link rel="stylesheet" href="style.css">
   <style>
@@ -18,7 +18,6 @@
     }
     #draw-area img { max-width: 100%; max-height: 100%; }
 
-    /* ボード全体 */
     .board {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
@@ -28,7 +27,6 @@
       border: 2px solid #ccc;
       margin-bottom: 20px;
     }
-    /* 各マス */
     .cell {
       border: 2px dashed #999;
       display: flex;
@@ -41,10 +39,7 @@
       max-height: 100%;
     }
 
-    #reset {
-      padding: 5px 10px;
-      font-size: 16px;
-    }
+    #reset { padding: 5px 10px; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -53,7 +48,7 @@
   <!-- カードを引く／めくるエリア -->
   <div id="draw-area">ここをタップしてカードを引く</div>
 
-  <!-- 空っぽのボード（マス目はJSで50個自動生成） -->
+  <!-- JS が自動で 50 個の .cell を作ります -->
   <div id="board" class="board"></div>
 
   <!-- 全部リセット -->
