@@ -4,70 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>たいわっCard ボード表示</title>
-  <style>
-    /* ─── レイアウト ─── */
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    /* カードを引くエリア */
-    #draw-area {
-      width: 200px;
-      height: 300px;
-      border: 2px solid #333;
-      margin: 0 auto 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-    }
-    /* ボード（空セルをグリッドで並べる） */
-    .board {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 10px;
-      max-width: 900px;
-      margin: 0 auto 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-    .cell {
-      width: 80px;
-      height: 80px;
-      border: 2px dashed #666;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fafafa;
-    }
-    .cell img {
-      max-width: 100%;
-      max-height: 100%;
-    }
-    button {
-      padding: 8px 16px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+  <!-- 必要に応じて style.css を用意 -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <h1>たいわっCard ボード表示</h1>
 
-  <!-- カードを引くエリア -->
+  <!-- ここをタップ／クリックするとカードを引く -->
   <div id="draw-area">ここをタップしてカードを引く</div>
 
-  <!-- 空っぽのボード -->
+  <!-- 「空っぽの」ボード -->
   <div id="board" class="board"></div>
 
   <button id="reset">リセット</button>
 
+  <!-- スクリプトはこの行の直前に読み込む -->
   <script src="script.js"></script>
 </body>
 </html>
